@@ -1,72 +1,118 @@
 # TruthChain MVP
 
-**Decentralized News Verification Prototype**
+**Decentralized News Verification Platform**
 
-An open-source platform that verifies news authenticity using IPFS storage and Polygon blockchain technology.
+An open-source platform that verifies news authenticity using IPFS storage and Polygon blockchain technology with MetaMask wallet integration.
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
+![Polygon](https://img.shields.io/badge/Polygon-Mainnet-purple.svg)
+![IPFS](https://img.shields.io/badge/IPFS-Web3.Storage-blue.svg)
 
 ---
 
-## 🎯 What is TruthChain?
+## Live Demo
 
-TruthChain is a minimal viable product (MVP) demonstrating decentralized news verification. When users submit news content with supporting media, the system:
+**Try it now:** [https://truthchain.replit.app/](https://truthchain.replit.app/)
 
-1. **Uploads** media files to IPFS (Web3.Storage) for permanent, decentralized storage
-2. **Generates** a SHA-256 cryptographic hash of the news package (text + IPFS CID + timestamp)
-3. **Records** the verification hash on the Polygon blockchain for immutable proof
-4. **Stores** all metadata in a PostgreSQL database for fast querying
+---
+
+## Screenshots
+
+### Homepage - Connect Wallet
+![Homepage](https://via.placeholder.com/800x500.png?text=TruthChain+Homepage+-+Connect+Your+MetaMask+Wallet)
+
+*Connect your MetaMask wallet to start verifying news on the blockchain*
+
+### Upload News for Verification
+![Upload Form](https://via.placeholder.com/800x500.png?text=Upload+Form+-+Submit+News+with+Media+Files)
+
+*Submit news content with supporting images or videos for permanent verification*
+
+### Verified Records Table
+![Records Table](https://via.placeholder.com/800x500.png?text=Verified+Records+-+Blockchain+Proof+with+IPFS+Links)
+
+*View all verified records with IPFS links, transaction hashes, and verification status*
+
+---
+
+## What is TruthChain?
+
+TruthChain is a decentralized news verification platform where users connect their own MetaMask wallets to create immutable, verifiable records of news content. When users submit news with supporting media:
+
+1. **Upload** media files to IPFS (Web3.Storage) for permanent, decentralized storage
+2. **Generate** a SHA-256 cryptographic hash of the news package (text + IPFS CID + timestamp)
+3. **Sign** the blockchain transaction with MetaMask (users pay their own gas fees)
+4. **Record** the verification hash on the Polygon blockchain for immutable proof
+5. **Store** metadata in PostgreSQL database for fast querying
 
 This creates a tamper-proof, verifiable record of news content that can be independently validated.
 
 ---
 
-## 🏗️ How It Works
+## Key Features
+
+- **MetaMask Integration** - Connect your own wallet, control your transactions
+- **User-Paid Gas Fees** - Complete decentralization with no server-side signing
+- **IPFS Storage** - Permanent, decentralized media storage via Web3.Storage
+- **Polygon Mainnet** - Fast, low-cost blockchain verification
+- **Event Verification** - Server validates blockchain events before saving
+- **Duplicate Prevention** - Database constraints prevent duplicate records
+
+---
+
+## How It Works
 
 ### Architecture Overview
 
 ```
-┌─────────────┐
-│   Frontend  │  (React + TypeScript)
-│  User Upload│
-└──────┬──────┘
-       │
-       ▼
-┌─────────────────────────────────────┐
-│        Backend API (Express)        │
-│  ┌──────────┐  ┌────────────────┐  │
-│  │   IPFS   │  │   PostgreSQL   │  │
-│  │ Storage  │  │    Database    │  │
-│  └──────────┘  └────────────────┘  │
-│         │                           │
-│         ▼                           │
-│  ┌─────────────────────────────┐   │
-│  │  Polygon Blockchain         │   │
-│  │  (Amoy Testnet)             │   │
-│  └─────────────────────────────┘   │
-└─────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                     User Browser                             │
+│  ┌───────────────┐    ┌─────────────────────────────────┐   │
+│  │   React App   │────│        MetaMask Wallet          │   │
+│  │  (Frontend)   │    │   (Transaction Signing)         │   │
+│  └───────┬───────┘    └─────────────┬───────────────────┘   │
+└──────────┼──────────────────────────┼───────────────────────┘
+           │                          │
+           ▼                          ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    Backend API (Express)                     │
+│  ┌──────────────┐  ┌────────────────┐  ┌────────────────┐   │
+│  │    IPFS      │  │   PostgreSQL   │  │   Event        │   │
+│  │   Upload     │  │    Database    │  │   Verifier     │   │
+│  └──────────────┘  └────────────────┘  └────────────────┘   │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    Polygon Mainnet                           │
+│                  TruthChain Smart Contract                   │
+│              0x8473fCf963A0b71994F16dFba2DeE53993377316      │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ### Verification Flow
 
-1. **User submits** news text + media file (image/video)
-2. **Server uploads** media to IPFS → receives Content ID (CID)
-3. **Server generates** SHA-256 hash: `hash = SHA256(text + cid + timestamp)`
-4. **Server calls** smart contract `storeRecord(hash, cid)` on Polygon
-5. **Transaction confirmed** → hash is permanently recorded on blockchain
-6. **Database saves** record with CID, hash, and transaction reference
-7. **User receives** verification confirmation with IPFS and blockchain links
+1. **User connects** MetaMask wallet to the app
+2. **Network validation** ensures user is on Polygon Mainnet (chainId: 137)
+3. **User submits** news text + media file (image/video)
+4. **Server prepares** by uploading media to IPFS and generating SHA-256 hash
+5. **User signs** the blockchain transaction in MetaMask
+6. **User pays** gas fees from their own wallet (MATIC/POL)
+7. **Transaction confirmed** on Polygon blockchain
+8. **Server verifies** the transaction receipt and decodes RecordStored event
+9. **Server validates** hash, CID, and submitter from event logs
+10. **Record saved** to PostgreSQL with wallet address
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
 - Node.js 18+ and npm
 - PostgreSQL database (provided by Replit)
 - Web3.Storage account and API token
-- Polygon wallet with testnet MATIC (optional for blockchain)
+- MetaMask browser extension with MATIC for gas fees
 
 ### Environment Variables
 
@@ -76,7 +122,7 @@ Create a `.env` file or use Replit Secrets:
 # Required
 DATABASE_URL=postgresql://...           # PostgreSQL connection
 WEB3_STORAGE_TOKEN=your_token_here     # From https://web3.storage
-POLYGON_PRIVATE_KEY=0x...              # Wallet private key (testnet only!)
+SESSION_SECRET=random_secret_string    # For session management
 
 # Auto-configured by Replit
 PGHOST=...
@@ -108,18 +154,16 @@ The app will be available at `http://localhost:5000`
 3. Generate an API token
 4. Add to your environment as `WEB3_STORAGE_TOKEN`
 
-### Getting Testnet MATIC
+### Getting MATIC for Gas Fees
 
-1. Create a wallet (MetaMask, etc.)
-2. Switch to Polygon Amoy testnet
-3. Get free testnet MATIC: https://faucet.polygon.technology/
-4. Export private key → add as `POLYGON_PRIVATE_KEY`
-
-**⚠️ Security Warning:** Never use mainnet private keys or share your secrets!
+1. Install MetaMask browser extension
+2. Add Polygon network or switch to Polygon Mainnet
+3. Purchase MATIC/POL from an exchange and send to your wallet
+4. You only need a small amount (~$0.10 USD) for several transactions
 
 ---
 
-## 📖 API Documentation
+## API Documentation
 
 ### `GET /api/records`
 
@@ -132,18 +176,19 @@ Fetch all verified news records.
     "id": "uuid",
     "text": "News content...",
     "cid": "bafybei...",
-    "hash": "a1b2c3...",
+    "hash": "0xa1b2c3...",
     "tx": "0x1234...",
     "fileName": "image.jpg",
     "fileType": "image/jpeg",
-    "timestamp": "2024-01-15T10:30:00Z"
+    "timestamp": "2024-01-15T10:30:00Z",
+    "walletAddress": "0xAbCd..."
   }
 ]
 ```
 
-### `POST /api/upload`
+### `POST /api/prepare-upload`
 
-Submit news for verification.
+Prepare news for blockchain verification (IPFS upload + hash generation).
 
 **Request (multipart/form-data):**
 - `text` (string): News content
@@ -153,16 +198,43 @@ Submit news for verification.
 ```json
 {
   "success": true,
-  "hash": "a1b2c3d4e5f...",
   "cid": "bafybei...",
-  "txHash": "0x1234abcd...",
+  "hash": "0xa1b2c3d4e5f...",
+  "timestamp": "2024-01-15T10:30:00.000Z",
+  "fileName": "image.jpg",
+  "fileType": "image/jpeg"
+}
+```
+
+### `POST /api/save-record`
+
+Save verified record after blockchain transaction.
+
+**Request (JSON):**
+```json
+{
+  "text": "News content...",
+  "cid": "bafybei...",
+  "hash": "0xa1b2c3...",
+  "tx": "0x1234...",
+  "fileName": "image.jpg",
+  "fileType": "image/jpeg",
+  "timestamp": "2024-01-15T10:30:00.000Z",
+  "walletAddress": "0xAbCd..."
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
   "record": { ... }
 }
 ```
 
 ---
 
-## 🎨 Tech Stack
+## Tech Stack
 
 ### Frontend
 - **React 18** with TypeScript
@@ -170,45 +242,45 @@ Submit news for verification.
 - **Shadcn UI** component library
 - **TanStack Query** for data fetching
 - **Wouter** for routing
-- **date-fns** for date formatting
+- **ethers.js** for MetaMask integration
 - **Lucide React** for icons
 
 ### Backend
 - **Node.js + Express** REST API
 - **PostgreSQL** with Drizzle ORM
 - **Multer** for file uploads
-- **ethers.js** for blockchain interaction
+- **ethers.js** for blockchain verification
 - **Web3.Storage** SDK for IPFS
 
 ### Blockchain
-- **Polygon Amoy Testnet** (EVM-compatible)
+- **Polygon Mainnet** (chainId: 137)
 - **Solidity 0.8.x** smart contract
-- **TruthChain.sol** - minimal verification contract
+- **TruthChain.sol** - verification contract
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 truthchain/
 ├── client/                  # Frontend React app
 │   ├── src/
-│   │   ├── components/     # Reusable UI components
-│   │   ├── pages/          # Page components
+│   │   ├── components/     # UI components (WalletButton, etc.)
+│   │   ├── contexts/       # WalletContext for MetaMask state
+│   │   ├── pages/          # Page components (home.tsx)
 │   │   ├── lib/            # Utilities
 │   │   └── hooks/          # Custom React hooks
 │   └── index.html
 ├── server/                  # Backend Express server
 │   ├── lib/
-│   │   ├── ipfs.ts        # IPFS integration
-│   │   ├── blockchain.ts  # Polygon integration
+│   │   ├── ipfs.ts        # IPFS/Web3.Storage integration
+│   │   ├── blockchain.ts  # Contract ABI for verification
 │   │   └── hash.ts        # SHA-256 utilities
 │   ├── routes.ts          # API endpoints
 │   └── storage.ts         # Database interface
 ├── contracts/              # Smart contracts
 │   └── TruthChain.sol     # Verification contract
-├── scripts/                # Deployment scripts
-│   └── deploy.ts          # Contract deployment
+├── contract-config.json   # Deployed contract address
 ├── shared/                 # Shared types/schemas
 │   └── schema.ts          # Database schema
 └── README.md              # This file
@@ -216,64 +288,86 @@ truthchain/
 
 ---
 
-## 🔗 Smart Contract
+## Smart Contract
 
 ### TruthChain.sol
 
-A minimal Solidity contract for storing verification records:
+Deployed on Polygon Mainnet at: `0x8473fCf963A0b71994F16dFba2DeE53993377316`
 
 ```solidity
 contract TruthChain {
-    event RecordStored(bytes32 hash, string cid);
+    event RecordStored(bytes32 indexed hash, string cid, address indexed submitter);
+    
+    mapping(bytes32 => bool) public records;
     
     function storeRecord(bytes32 hash, string memory cid) public {
-        // Store verification hash + IPFS CID
-        // Emit event for transparency
+        require(!records[hash], "Record already exists");
+        records[hash] = true;
+        emit RecordStored(hash, cid, msg.sender);
     }
 }
 ```
 
 **Features:**
 - Stores hash + IPFS CID mapping
-- Emits events for off-chain indexing
-- No centralized control
-- Minimal gas costs
-
-### Deploying the Contract
-
-```bash
-# Using the deployment script
-npx tsx scripts/deploy.ts
-
-# Or with Hardhat (production)
-npx hardhat compile
-npx hardhat run scripts/deploy.ts --network polygon-amoy
-```
-
-The contract address will be saved to `contract-config.json`.
+- Prevents duplicate records
+- Emits events with submitter address
+- Minimal gas costs (~30,000 gas per record)
 
 ---
 
-## 🧪 Testing
+## Security Features
 
-### Manual Testing
+### Current Implementation
 
-1. Start the development server
-2. Open `http://localhost:5000`
-3. Enter news text and upload an image
-4. Click "Verify & Submit"
-5. Wait for IPFS upload and blockchain confirmation
-6. Verify record appears in the table below
+- **Client-side signing** - No server private key, users control transactions
+- **Event verification** - Server decodes RecordStored events using ABI
+- **Hash validation** - Proper bytes32 formatting with ethers.getBytes/hexlify
+- **Duplicate prevention** - Database unique constraints on hash and tx
+- **Network validation** - Only accepts Polygon Mainnet transactions
+- **Submitter verification** - Validates wallet address from event logs
 
-### Verification
+### MVP Limitations
 
-- **IPFS:** View files at `https://w3s.link/ipfs/{CID}`
-- **Blockchain:** Check transactions on Polygon scan
-- **Hash:** Verify integrity by re-computing SHA-256
+- No rate limiting on uploads
+- No content moderation system
+- Basic error handling
+- No user authentication
 
 ---
 
-## 🤝 Contributing
+## Roadmap
+
+### Phase 1: MVP (Complete)
+- [x] MetaMask wallet integration
+- [x] IPFS file upload (Web3.Storage)
+- [x] SHA-256 hash generation
+- [x] Client-side transaction signing
+- [x] Polygon Mainnet deployment
+- [x] Event log verification
+- [x] PostgreSQL persistence
+- [x] English UI
+
+### Phase 2: Enhanced Features
+- [ ] User authentication
+- [ ] Personal dashboards
+- [ ] Record search and filtering
+- [ ] Rate limiting
+
+### Phase 3: Community Features
+- [ ] Fact-checking voting
+- [ ] Source reputation scores
+- [ ] Browser extension
+- [ ] Mobile app
+
+### Phase 4: Full Decentralization
+- [ ] Multi-chain support
+- [ ] DAO governance
+- [ ] Token incentives
+
+---
+
+## Contributing
 
 We welcome contributions! Here's how to get started:
 
@@ -288,111 +382,34 @@ We welcome contributions! Here's how to get started:
 - Follow TypeScript best practices
 - Use existing component patterns (Shadcn UI)
 - Add proper error handling
+- Test with MetaMask on Polygon Mainnet
 - Write clear commit messages
-- Test your changes thoroughly
 
 ---
 
-## 🗺️ Roadmap
-
-### Phase 1: MVP ✅
-- [x] IPFS file upload integration
-- [x] SHA-256 hash generation
-- [x] PostgreSQL database storage
-- [x] Polygon blockchain recording
-- [x] Basic web UI
-- [x] REST API endpoints
-
-### Phase 2: Enhanced Verification
-- [ ] User authentication system
-- [ ] Personal verification dashboards
-- [ ] Fact-checking workflow
-- [ ] Community voting on news credibility
-- [ ] Reputation scoring for sources
-
-### Phase 3: Advanced Features
-- [ ] Browser extension for auto-verification
-- [ ] Multi-chain support (Ethereum, Arbitrum, etc.)
-- [ ] News source reputation metrics
-- [ ] API for third-party integrations
-- [ ] Mobile app (React Native)
-
-### Phase 4: Decentralization
-- [ ] Decentralized storage alternatives
-- [ ] DAO governance for platform rules
-- [ ] Token-based incentive system
-- [ ] Distributed moderation
-- [ ] Cross-chain verification bridges
-
----
-
-## 🔒 Security Considerations
-
-### Current MVP Limitations
-
-⚠️ **This is a prototype - not production-ready:**
-
-- Private keys are stored server-side (use wallet connections in production)
-- No rate limiting on uploads
-- No content moderation system
-- Limited input validation
-- Testnet only - not real value
-
-### Production Recommendations
-
-1. **Client-side wallet integration** (MetaMask, WalletConnect)
-2. **Content moderation** and spam prevention
-3. **Rate limiting** and CAPTCHA
-4. **Enhanced validation** for uploads
-5. **Audit** smart contracts before mainnet
-6. **Encrypt** sensitive data at rest
-7. **Implement** proper access controls
-
----
-
-## 📄 License
+## License
 
 MIT License - see [LICENSE](LICENSE) file for details.
 
-This means you can:
-- ✅ Use commercially
-- ✅ Modify and distribute
-- ✅ Use privately
-- ✅ Patent use
-
-As long as you:
-- ℹ️ Include original license
-- ℹ️ State changes made
-
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - **Web3.Storage** for decentralized file storage
 - **Polygon** for scalable blockchain infrastructure
-- **Ethereum** ecosystem and tooling
+- **MetaMask** for wallet integration
 - **Shadcn UI** for beautiful components
 - **Drizzle ORM** for type-safe database queries
-- **Open-source community** for making this possible
 
 ---
 
-## 📞 Support & Contact
+## Support
 
+- **Live Demo:** [https://truthchain.replit.app/](https://truthchain.replit.app/)
 - **Issues:** [GitHub Issues](https://github.com/yourusername/truthchain/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/yourusername/truthchain/discussions)
-- **Documentation:** This README + inline code comments
 
 ---
 
-## 🌟 Star History
-
-If you find TruthChain useful, please consider giving it a star! ⭐
-
-It helps others discover the project and motivates continued development.
-
----
-
-**Built with ❤️ for a more transparent internet**
+**Built for a more transparent internet**
 
 *TruthChain MVP - Decentralized News Verification*
