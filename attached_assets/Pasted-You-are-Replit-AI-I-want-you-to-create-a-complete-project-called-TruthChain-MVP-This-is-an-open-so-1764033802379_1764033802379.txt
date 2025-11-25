@@ -1,0 +1,179 @@
+You are Replit AI.
+I want you to create a complete project called TruthChain MVP.
+This is an open-source decentralized news verification prototype.
+
+👇 Build EVERYTHING automatically following this exact specification:
+
+📌 PROJECT GOAL
+
+A minimal MVP that allows users to:
+
+Upload an image or video + short text.
+
+Upload the file to IPFS (use Web3.Storage API).
+
+Generate a SHA-256 hash of the entire “news package”.
+
+Store the record locally in SQLite.
+
+Record the hash + IPFS CID on the blockchain (Polygon testnet using ethers.js + a simple contract).
+
+Provide a clean frontend UI to submit and view verified news.
+
+Provide REST API to fetch all verified entries.
+
+Include a production-ready README.md explaining everything.
+
+📦 TECHNOLOGY STACK
+
+Backend: Node.js + Express
+Frontend: Simple HTML/CSS/JS (served by Express “public” folder)
+Database: SQLite (using better-sqlite3)
+Blockchain: Polygon Amoy Testnet using ethers.js
+Storage: IPFS via web3.storage
+Smart Contract: Minimal contract with a function storeRecord(bytes32 hash, string memory cid)
+Deploy it automatically via scripts folder.
+
+📁 FILE STRUCTURE
+
+Create this exact structure:
+
+truthchain/
+ ├─ package.json
+ ├─ server.js
+ ├─ config.js
+ ├─ db.js
+ ├─ routes/
+ │   ├─ upload.js
+ │   └─ records.js
+ ├─ public/
+ │   ├─ index.html
+ │   ├─ style.css
+ │   └─ app.js
+ ├─ scripts/
+ │   ├─ contract.sol
+ │   ├─ deploy.js
+ ├─ README.md
+
+🔧 REQUIRED FEATURES (VERY IMPORTANT)
+✔ Backend
+
+POST /api/upload → receives: text + file
+
+Upload file to IPFS via web3.storage
+
+Compute SHA-256 hash of:
+
+text
+
+IPFS CID
+
+timestamp
+
+Insert into SQLite
+
+Call smart contract function to store hash + cid
+
+Return JSON { success, hash, cid, txHash }
+
+✔ Frontend
+
+Index page must have:
+
+text input
+
+file input
+
+submit button
+
+table that loads all existing verified records using /api/records
+
+Use basic fetch() API.
+
+✔ IPFS Support
+
+Use Web3.Storage SDK.
+Create config.js with environment variables:
+
+WEB3_STORAGE_TOKEN=your_token_here
+PRIVATE_KEY=your_polygon_wallet
+
+
+(do not hardcode secret values)
+
+✔ Blockchain
+
+Create a minimal Solidity contract:
+
+contract TruthChain {
+    event RecordStored(bytes32 hash, string cid);
+    function storeRecord(bytes32 hash, string memory cid) public {
+        emit RecordStored(hash, cid);
+    }
+}
+
+
+Deploy using ethers.js + Hardhat (or simple script).
+
+✔ Database
+
+Create SQLite table:
+
+id INTEGER PRIMARY KEY AUTOINCREMENT
+text TEXT
+cid TEXT
+hash TEXT
+tx TEXT
+timestamp DATETIME
+
+✔ API Routes
+
+GET /api/records → list all records
+
+POST /api/upload → create new record
+
+✔ README.md
+
+Explain:
+
+What is TruthChain
+
+How the MVP works
+
+How to run it
+
+How to contribute
+
+Roadmap items
+
+License MIT
+
+🎨 UI Requirements
+
+Minimal clean UI:
+
+centered container
+
+title “TruthChain — Decentralized News Verification MVP”
+
+form for text + file
+
+table for news list
+
+green/blue theme
+
+🚀 FINAL STEP
+
+After generating all files:
+
+Run the server
+
+Ensure frontend works
+
+Ensure file upload works
+
+Ensure IPFS upload returns CID
+
+Save at least one example record
+
+Respond: “TruthChain MVP fully generated.”
