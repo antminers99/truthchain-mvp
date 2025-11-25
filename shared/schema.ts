@@ -11,7 +11,8 @@ export const newsRecords = pgTable("news_records", {
   tx: text("tx"),
   fileName: text("file_name"),
   fileType: text("file_type"),
-  timestamp: text("timestamp").notNull(), // Store ISO string used in hashing
+  timestamp: text("timestamp").notNull(),
+  walletAddress: text("wallet_address"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
