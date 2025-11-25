@@ -45,4 +45,3 @@ waitForPort = 5000
 [userenv]
 
 [userenv.shared]
-TEST_MODE = "true"
